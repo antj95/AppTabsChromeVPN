@@ -1,8 +1,6 @@
 // require your node module
 const bot = require("puppeteer");
-// var openBrowser = require('open-web-browser');
 const fs = require("fs");
-// const useProxy = require('puppeteer-page-proxy')   
 const useProxy = require('puppeteer-page-proxy');
 
 //we will set the proxy user name and password 
@@ -34,15 +32,25 @@ async function runAdsenseBot(){
     let proxy = await getRandomItem("./assets/list-of-proxy.json")
     console.log("we have picked this proxy;", proxy)
 
-    const chromeBrowser = await bot.launch(botConfiguration)
     
+    const chromeBrowser = await bot.launch({
+        headless: true,                                         //make false if u want to see the browser
+        ignoreDefaultArgs: ['--disable-extensions'],            //disable all the extensions in windows 
+    });
     try{
-        const chromeBrowserPage = await chromeBrowser.newPage()
-        await useProxy(chromeBrowserPage,"socks://gMo4XNwjx:7LHAxLObMY5@syd.socks.ipvanish.com:1080") 
+        const chromeBrowserPage = await chromeBrowser.newPage();
+        await useProxy(chromeBrowserPage,"socks://gMo4XNwjx:7LHAxLObMY5@syd.socks.ipvanish.com:1080")
         await chromeBrowserPage.setUserAgent(userAgent)
         await chromeBrowserPage.goto("http://whoer.net/")
+
+        
+        // uncomment this👇👇 
+        /*  
+        await chromeBrowserPage.screenshot({ path: 'example.png' })      //after a certain time example.png will b seen in dashboard  (*******   this is for checking purpose    *******)
+        console.log('ss added')
+        */
     }catch (e){
-    
+        throw new Error({message: e.message});
     } finally {
         setTimeout( function(){
             chromeBrowser.close()
